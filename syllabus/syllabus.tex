@@ -1,0 +1,409 @@
+\documentclass[12pt]{article}
+
+%% -----------------------------------------------------------------------------
+%% document structure packages
+%% -----------------------------------------------------------------------------
+
+\usepackage{multicol}           % multiple column handling
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{enumerate}          % package for improved enumeration
+\usepackage{appendix}           % for more appendix options
+\usepackage{verbatim}           % for extended verbatim functionality
+
+
+%% -----------------------------------------------------------------------------
+%% font and encoding related packages (non-math)
+%% -----------------------------------------------------------------------------
+
+\usepackage{ulem}               % for alternative underline
+\usepackage[charter,cal=cmcal]{mathdesign} % DK addition
+
+%% -----------------------------------------------------------------------------
+%% math related packages
+%% -----------------------------------------------------------------------------
+
+\usepackage{mhsetup}
+\usepackage[fixamsmath]{mathtools}
+
+
+%% -----------------------------------------------------------------------------
+%% graphics related packages
+%% -----------------------------------------------------------------------------
+
+\usepackage[all]{xy}        % for xy graphics
+\usepackage{graphicx}       % for graphic images
+\usepackage{wrapfig}        % for wrapping
+\usepackage{subfigure}      % for subfigures
+\usepackage{tikz}           % tikz
+
+
+%% -----------------------------------------------------------------------------
+%% table and figure related packages
+%% -----------------------------------------------------------------------------
+
+\usepackage{multirow}       % for multiple rows in tables
+\usepackage{booktabs}       % for professional tables
+\usepackage{dcolumn}        % for academic tables
+\usepackage{rotating}       % for rotating tables and figures
+\usepackage{pdflscape}      % for landscape tables
+\usepackage{array}          % for additional table settings
+\usepackage{longtable}      % for long tables
+\usepackage{threeparttable} % for table footnotes
+
+
+%% -----------------------------------------------------------------------------
+%% biblatex package and options
+%% -----------------------------------------------------------------------------
+
+%\usepackage[                    % biblatex package for
+%  bibstyle=authoryear,          % author year style in bibliography
+%  citestyle=authoryear-comp,    % author year style in citations
+%  sorting=nyt,                  % sort bib by name, year, title
+%  hyperref=auto,                % enable hyperref if cite style allows
+%  % maxcitenames=2,               % maximum names before et al.
+%  maxnames=3,
+%  isbn=false,
+%  url=false,
+%  doi=false,
+%  eprint=false
+%]{biblatex}                     % load
+%
+%\bibliography{library}          % set default reference database
+
+
+% ------------------------------------------------------------------ %
+% Page formatting                                                    %
+% ------------------------------------------------------------------ %
+
+\usepackage[top=1in,right=1in,left=1in,bottom=1in]{geometry}
+\usepackage{parskip}
+\usepackage{color}
+
+% Fancy headers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.3pt}
+\headheight 15.0pt
+
+% Formatting
+\setlength{\itemsep}{1em}     % item separation
+%\setlength{\bibitemsep}{1em}  % bib item separation
+
+
+% --------------------------------------------------------------------------- %
+% optional packages and other options                                         %
+% --------------------------------------------------------------------------- %
+
+% Original author: Jason W. Morgan, borrowing heavily from courses taught by
+% William Minozzi. Other contributions from Drew Rosenberg, Daniel Kent, Caleb
+% Leininger.
+\usepackage[pdftex,
+pdftitle={Syllabus: Math Workshop for Political Science},
+pdfauthor={Benjamin W. Campbell},
+pdfsubject={syllabus},
+pdfkeywords={political science, syllabus, methods, statistics},
+pdfproducer={pdfLaTeX},
+plainpages=false,
+letterpaper=true,
+citecolor=black,
+linkcolor=blue,
+colorlinks=true]{hyperref}
+
+% header
+\lhead{Math Workshop (2023)}
+\chead{}
+\rhead{Campbell \& Zhang}
+%\lfoot{Syllabus version 1.0}
+\cfoot{}
+\rfoot{\thepage}
+
+
+% --------------------------------------------------------------------------- %
+% macros                                                                      %
+% --------------------------------------------------------------------------- %
+
+% Centered rule of variable thickness and length
+% USAGE: \flexrule{width}{thick}.
+\newcommand{\flexrule}[2]{
+  \begin{center}
+    \rule{#1\textwidth}{#2}
+  \end{center}
+}
+
+\renewcommand{\labelitemi}{$\bullet$}
+\renewcommand{\labelitemii}{$\circ$}
+\renewcommand{\labelitemiii}{$\blackdiamond$} % mathabx package
+\renewcommand{\labelitemiv}{$\diamond$}
+
+
+% --------------------------------------------------------------------------- %
+% begin document                                                              %
+% --------------------------------------------------------------------------- %
+\begin{document}
+% this makes emphasis normal
+\normalem
+
+% --------------------------------------------------------------------------- %
+% begin content                                                               %
+% --------------------------------------------------------------------------- %
+
+\thispagestyle{empty}
+\begin{center}
+  {\huge\bfseries Math Workshop for Political Science} \\[0.5em]
+  {\LARGE\bfseries The Ohio State University} \\[0.5em]
+  {\large\bfseries Syllabus: Autumn 2023} \\
+
+  \vspace{2.5em}
+
+  \begin{minipage}{0.4\linewidth} \flushleft
+    \begin{tabular}{ll}
+      Instructor:         & Benjamin W. Campbell \\
+      Email:              & \emph{campbell.1721}\emph{\small @}\emph{osu.edu} \\[1.0em]
+      Teaching Assistant: & Liuya Zhang \\
+      Email:              & \emph{zhang.11580}\emph{\small @}\emph{osu.edu}
+    \end{tabular}
+  \end{minipage}
+  \hspace{0.14\linewidth}
+  \begin{minipage}{0.44\linewidth} \flushleft
+    \begin{tabular}{ll}
+      Class location: & 2130 Derby Hall \\
+      Class time:     & M--F, 9:00--11:30 EDT \\[1.0em]
+      Office location & 2120 Derby Hall \\
+      Office hours:   & M-F, 13:00--14:00 EDT
+    \end{tabular}
+  \end{minipage}
+\end{center}
+
+\vspace{0.5em}
+
+
+\flexrule{1.0}{0.5pt}
+
+\section*{Description}
+
+The purpose of this workshop is to provide incoming first year Ph.D. students
+with some fundamental skills in various mathematical techniques that are used in
+political science, regardless of sub-specialty, and generally to prepare
+students for the first-year methods sequence. The workshop is also open to
+continuing students, who feel that they would gain from participating in the
+course.
+
+This year the course will begin on Monday, August 7th and run every weekday
+until Friday, August 18th. Sessions are tenantively scheduled to run from
+9:00---11:30 each day. In the past, there has also been an additional meeting on
+Saturday. We hope this will not be necessary this year, though if we fall behind
+in the material, we may need to reconsider.
+
+
+\subsubsection*{Textbook}
+
+Moore, W.H. and Siegel, D.A., 2013.
+\emph{A Mathematics Course for Political and Social Research}.
+Princeton University Press. (SM)
+
+Wickham, H. and Grolemund, G., 2017. \emph{R for Data Science}. O’Reilly. (WG)
+
+
+\subsubsection*{General resources}
+
+\begin{itemize}
+\item Another popular, but more technical, textbook is: Simon, Carl P. and
+  Lawrence Blume., 1994, \emph{Mathematics for Economists}. Vol. 7. New York:
+  Norton.
+\item MIT Open Courseware (Mathematics):
+  \url{http://ocw.mit.edu/courses/#mathematics}
+\item Khan Academy: \url{http://www.khanacademy.org/}
+\item Brightstorm: \url{http://www.brightstorm.com/math/}
+\item MathTV: \url{http://www.mathtv.com/videos\_by\_topic}
+\end{itemize}
+
+% \newpage
+
+\section*{Class Format}
+
+The workshop will be taught in a lecture format. During each day's session we
+will review the problem set from the previous day before covering the current
+day's material. Before each session, it is expected that students will complete
+the previous day's problem set and review the current day's course
+materials. While the course will be presented as a lecture, student
+participation is strongly encouraged. For each module, links to a series of
+short videos, lecture notes, and a daily problem set will be provided.
+
+The day's preparatory videos are available in the course's Github repository
+\href{https://github.com/benjamin-w-campbell/math-workshop}{here}. Problem sets and
+lecture notes will be posted immediately following the end of that day's
+session.
+
+There are nine problem sets, each of which will be due the following morning at
+the start of class. Students should plan to spend 2--4 hours each day completing
+these assignments and preparing for the following session.
+
+
+\section*{R Introduction}
+
+The compressed nature of this class makes it impossible to give students a
+comprehensive introduction to all of the tools they will need in the first year
+methods sequence. However, a brief introduction to R and computational social
+science will be provided during the last 3 lectures.
+
+Our R resource for these 3 lectures will be a notebook that we will work through together.
+While the Wickham and Grolemund book is a fantastic resource for one's methods coursework,
+it is also quite thorough and extensive. For a brief introduction and overview
+of R this workshop will be helpful.
+
+
+\newpage
+\section*{Class schedule}
+
+\subsubsection*{Day 1: Introduction, Pre-test, Notation and Definitions, and
+Some Basic Mathematics}
+
+\begin{itemize} \itemsep-0.35em
+\item Definition of a variable and real number systems
+\item Set notation and relationships
+\item Definition of independent and dependent variables
+\item Discussion of interval notation
+\item Definitions of types of functions
+\item Commutative, associative, and distributive laws
+\item Concepts of inequality and absolute value
+\item Exponent rules
+\end{itemize}
+
+\subsubsection*{Day 2: Some Basic Mathematics (II)}
+
+\begin{itemize} \itemsep-0.35em
+%\item \textbf{Reading}: SM (3-21, Ch.2, Ch.3) \& WG (Preface, Ch.1)
+\item Summation and product operators
+\item Factorials, permutations, and combinations
+\item Solving equations, inequalities, and for roots
+  \begin{itemize} \itemsep-0.35em
+  \item Single and multiple variables
+  \item Quadratic formula
+  \item Factoring
+  \end{itemize}
+\item Logarithms and rules
+\end{itemize}
+
+\subsubsection*{Day 3: Linear Algebra (I)}
+
+\begin{itemize} \itemsep-0.35em
+%\item \textbf{Reading}: SM (275-288, 297-298, 304-309) \& WG (Ch.2)
+\item Linear equations and linear systems
+\item Method of elimination
+\item Definition of matrices and vectors
+\item Matrix operators
+\item Transposes
+\item Dot product and matrix multiplication
+\item Matrix representation of systems of equations
+\end{itemize}
+
+\subsubsection*{Day 4: Linear Algebra (II)}
+
+\begin{itemize} \itemsep-0.35em
+%\item \textbf{Reading}: SM (289-297, 315-324) \& WG (Chs.3-4)
+\item Linear dependence/independence
+\item Properties of matrix operators
+\item Definition of identity, zero, and idempotent matrices
+\item Reduced row/row echelon form and solving linear systems of equations
+  Gauss-Jordan Reduction/Elimination
+\end{itemize}
+
+\subsubsection*{Day 5: Linear Algebra (III)}
+
+\begin{itemize} \itemsep-0.35em
+%\item \textbf{Reading}: SM (298-300, 310-315) \& WG (Chs.5-6)
+\item Inverses
+\item Conditions for nonsingularity of matrix
+\item Definition of matrix rank
+\item Determinants
+\item Matrix inversion
+\item Trace of a matrix
+\item Eigenvectors and eigenvalues%$\dagger$
+% \item Cofactor expansion
+\end{itemize}
+
+\subsubsection*{Day 6: Linear Algebra (IV) and Calculus (I -- Introduction to
+  Differentiation)}
+
+\begin{itemize} \itemsep-0.35em
+% \item \textbf{Reading}: SM (81-92, 96-99, 103-113, Ch.6) \& WG (Ch.7)
+% \item Cramer’s rule and equation solution
+\item Limits
+\item The difference quotient
+\item The derivative
+\item Rules of differentiation for a function of one variable
+\item Rules of differentiation involving two or more functions of the same
+  variable
+\end{itemize}
+
+\subsubsection*{Day 7: Calculus (II -- More Differentiation)}
+
+\begin{itemize} \itemsep-0.35em
+% \item \textbf{Reading}: SM (113-114, 355-361) \& WG (Ch.8)
+\item Derivative of exponential and log functions
+\item Rules of differentiation involving functions with different
+  variables
+\item Partial differentiation
+\item Comments on differentiability and continuity
+\item Second and higher derivatives
+\end{itemize}
+
+\subsubsection*{Day 8: Calculus (III -- Optimization and Constrained Optimization)}
+
+\begin{itemize} \itemsep-0.35em
+% \item \textbf{Reading}: SM (Ch.8) \& WG (Ch.9)
+\item Definition of optimum and extreme values
+\item Relative maximum and minimum
+\item Second-derivative test
+\item Constrained optimization and Lagrange Multipliers
+\item Quadratic approximation and Taylor series expansion%$\dagger$
+\item \textbf{R Introduction}
+\begin{itemize}
+  \item Installing R and RStudio
+  \item Scripts vs. terminal vs. notebooks
+  \item Coding best practices
+\end{itemize}
+\end{itemize}
+
+\subsubsection*{Day 9: Calculus (IV -- Integration)}
+
+\begin{itemize} \itemsep-0.35em
+% \item \textbf{Reading}: SM (133-143) \& WG (Ch.10)
+\item Antidifferentiation
+\item Areas and Riemann sums
+\item Indefinite and definite integrals
+\item Fundamental Theorem of Calculus
+\item \textbf{R Basics}
+\begin{itemize}
+  \item Object types
+  \item Data storage
+  \item Functional programming
+  \item Data visualization
+\end{itemize}
+\end{itemize}
+
+\subsubsection*{Day 10: Calculus (V -- More Integration)}
+
+\begin{itemize} \itemsep-0.35em
+% \item \textbf{Reading}: SM (144-150, 362-374) \& WG (Ch.14)
+\item Integration by substitution
+\item Integration by parts
+\item Brief discussion of improper integrals
+\item Calculus on matrices: the general rules%$\dagger$
+\item \textbf{Data Analysis in R}
+\begin{itemize}
+  \item Exploratory data analysis on real data
+\end{itemize}
+\end{itemize}
+
+
+% --------------------------------------------------------------------------- %
+% bibliography                                                                %
+% --------------------------------------------------------------------------- %
+% \clearpage
+% \insertbib
+\end{document}
