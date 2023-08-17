@@ -1,0 +1,94 @@
+---
+title: "01: Introduction to R"
+author: "Ben Campbell"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    toc: true
+    theme: united
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R
+
+R is a programming language designed for computational statistics. It is free and open source (FOSS), and it has a large and very active developer community. R is an offshoot of the S language created at Bell Labs as a programming language that could be used by statisticians, who largely don't want to learn Fortran (punch cards, anyone?).
+
+R is exceptionally powerful and on the cutting edge.  It is increasingly the standard in academia, Political Science, and is commonly used in business.  
+
+# Why R? 
+
+R is the closest we have to a lingua franca of statistical computing. There are many good reasons for that. To me, it's enough that R is the only large project of its kind that is Free and Open Source Software (FOSS) Stata and SAS are proprietary; SPSS uses the R and Python languages but the software itself is proprietary; Julia is FOSS and it's pretty cool but it's still a very "young" language with a relatively small community of developers.
+
+It is also highly flexible, you can do almost anything you'll need to do, full stack.  If you can't find functionality to do it, you can program it yourself. 
+
+R is great with graphics.
+
+You know exactly what is going on underneath the hood.
+
+There are increasingly reporting tools built in (knitr, R markdown).
+
+## But what about R-Studio? 
+RStudio, which you are seeing right now, is not synonymous with R! It is what is referred to as an Integrated Development Environment (or IDE), which is a piece of software designed to provide tools to help you interact with R.
+
+## But what about Python? 
+
+Python is an extremely powerful, multi-purpose programming language that is used by data practioners in industry the world over.  
+
+Most statistical development, driven by academia, tends to occur in R.  Most machine learning development, typically driven by industry and academia, tends to occur in Python.  
+
+For most Political Scientists, they will find that R will serve most of their use cases.  However, there may at some point be a need to learn Python as you begin to work on more specialized problems.  This is especially true if you work with natural language processing or computer vision based challenges.  
+
+
+## But how does R work?
+
+R is an example of object oriented programming.
+
+R uses easily replicable code, not point and click like SPSS or Stata.  This code is typically saved in a script (.R file) or a notebook/R-Markdown file (.Rmd). Storing your code in this way allows you to save it, version control it, and manipulate it.  This code can be executed in the console or in RStudio's source editor.
+
+Scripts should contain code, annotations, and header information. Notebooks can contrain all of these as well as markdown.   
+
+R, like most programming languages, works from a "working directory" which is pre-set or you define to a local folder.  This is where R will look for files when importing, or save files when exporting.  
+
+```{r echo=TRUE}
+getwd()
+setwd("/Users/bencampbell/code/math-workshop-instructor/R")
+```
+
+RStudio has a really nifty "projects" feature that saves your working state in a directory of your choice. when you open a project in RStudio, it will reload all the tabs you had open *and* every object in your environment.  Note, these are helpful for some projects, but are not replicable or best practice.
+
+# Best Practices in Code Development
+
+There are a lot of opinions about how to best develop code.  I cannot teach you every best practice for code development.  Some best practices will come out along the way.  Instead, I'll focus on the why, which I'm hoping will help to craft good judgement. 
+
+At the end of the day, most of our goals in developing best practices for coding are:
+* Make it easy for others and your future self to understand and interpret your code.
+* When working as a team, make sure there is no "my code" or "your code" but "our code."
+* If code and analyses aren't replicable and your code only works on your laptop, you're not doing science. 
+
+## Style Guides
+Lots of people have lots of opinions about simple things, from file naming to how you use line breaks.  In general, [Hadley Wickham's style guide](http://adv-r.had.co.nz/Style.html) is the default.  I encourage you to read this on your own.  
+
+Whichever style guide you choose to dogmatically follow, the goal of a uniform style guide is to *help produce code that is readable and interpretable to others.*  Long story short, be intentional about how you name files, variables, and functions.  Comment your code.
+
+## Version Control
+Get good at git.  Git is a free and open source version control system that allows developers to more effectively manage and share their code.  Imagine you are on a research team and there are 10 different scripts named things like `theThing_FINALFINAL.R` and `USETHIS.R` but they all roughly contain the same code.  What do you do?  Git allows you to reduce clutter and have one version of a file with a history associated with it.  Let's say you make a mistake.  You can revert those changes. 
+
+Git would also allow contributors to more clearly see the differences between versions of a file and see how code has changed over time.  
+
+Git tends to be underutilized in academia, but from my perspective it is a great way to manage and distribute your code.  It is absolutely necessary when there is more than 1 person working on the code of a project.  
+
+But, git can also be used for LaTeX to enable easy version controlling.
+
+[Here's a good tutorial that will teach you how to use Git alongside R.](https://www.youtube.com/watch?v=QLFc9gw_Hfs)
+
+## Minimize Interactiveness in Your Code
+Notebooks and other interactive coding environments can produce some very problematic patterns.  If you are interacting with your code and changing your code as you're executing it, then your environment is not replicable by a colleague or by yourself in the future.  
+
+Before any coding session is complete, or any analyses are shared or used, the script or notebook should be executed from start to finish in a clear workspace to ensure that anyone else could pick it up and use it.
+
+Replicability is a core tenant of science, and this is the only way to ensure your analysis is replicable. 
+
+If you wanna go really crazy, run your code in a Docker container and share that container with your colleagues.

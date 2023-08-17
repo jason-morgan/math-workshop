@@ -1,0 +1,514 @@
+---
+title: "03: Example Exploratory Data Analysis"
+author: "Ben Campbell"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    toc: true
+    theme: united
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Introduction and Motivation
+Jesse Johnson (UK) and Ashley Leeds (Rice) have a well known 2011 piece in Foreign Policy Analysis that examines the effect of alliances on conflict, esentially finding that the presence of an alliance within a dyad influences conflict in varying ways between 1816-2000:
+
+* Deterrence: If a targeted state has a defensive alliance, they may be less likely to be attacked.
+* Empowerment: If a challenging state has an offensive alliance, they may be more likely to initiate conflict.
+
+But there's been a lot of discussion about how the development of nuclear weapons may undermine the effect of alliances in deterring conflict.  As such, we will briefly examine whether these effects hold on a subset of the data occuring after World War 2.  
+
+*Disclaimer: This is an ongoing debate and this isn't the most rigorous way to address this question.  I'm also like 5+ years removed from this literature so who knows where it's at now.*  
+
+# Data Preparation
+## Importing Data
+We will start with importing the data.  Leeds and Johnson conducted their analysis in Stata (hiss!), so we will have to rely upon packagesto import this data.  Here, we will use Thomas Leeper's `rio` package, although Hadley Wickham's `haven` package may also be useful.  `rio` is nice because it only uses one function and takes care of a lot of clean up.
+
+Here, since I only want one function from `rio`, the import function, I'm not going to attach the whole package but instead point R to the `import` function in `rio` using the `::` operator. This is good practice as it promotes clarity in where you are drawing certain functions.  If you, however, are using a lot of functions from the same package, you may use `library()`.  
+
+This will take a few seconds as it is 1,000,000+ directed dyads.
+```{r echo=TRUE, eval=TRUE}
+install.packages(c("rio", "Rmisc", "texreg"), repos='http://cran.us.r-project.org')
+
+dat <- rio::import('~/code/math-workshop-instructor/R/data/LeedsJohnsonJOPrep.dta')
+```
+
+## Spot Checking
+When you're reading in data, it's always a good idea to spend some time spot checking to make sure things loaded in appropriately.
+```{r echo=TRUE, eval=TRUE}
+head(dat)
+
+tail(dat)
+```
+
+One reasonable question is whether we are working with dyads or directed dyads.  We cna do this by looking at COW codes:
+```{r echo=TRUE, eval=TRUE}
+table(dat$challenger < dat$target)
+```
+
+## Filtering and Processing
+Now we can subset the data down to only those dyad-years after 1945.  This is done by essentially declaring some logical.
+```{r echo=TRUE, eval=TRUE}
+range(dat$year)
+table(dat$year)
+table(is.na(dat$year))
+
+postWW2 <- dat[dat$year > 1945,]
+```
+
+Note, R doesn't know what to do with NA's, so if we had missingness in a variable we were trying to subset on, we might have some issues:
+```{r echo=TRUE, eval=TRUE}
+NA > 1945
+```
+
+Let's double check we did this right
+```{r echo=TRUE, eval=TRUE}
+range(dat$year)
+range(postWW2$year)
+```
+
+Let's remove the `dat` object to free up space.  Note, we need to first remove it from our workspace, and then call the garbage collector to free up memory.
+```{r echo=TRUE, eval=TRUE}
+rm(dat)
+gc()
+```
+
+# Visual Exploratory Data Analysis
+## Univariate Analysis
+
+So, we have the data we are interested in examining all laid out.  Let's start by doing some univariate visualizations of the data. *Note: Usually, before you get here, you'd have to clean your data first. Cleaning and collecting your data is like 90% of industry data science work* These data are fairly clean though.
+
+While most of our primary variables are dichotomous, a few are continuously measured and should be visualized using certain tools,such as histograms or density plots.
+
+The following variables are continuous:
+
+* `capprop`: Challenger's probability of winning
+* `ln_distance`: log distance in KM between challenger and target
+* `s_un_glo`: similarity in alliance portolios
+
+Since we want to do the same plots for the same variables, because of this, might be easier to make a function.  First, let's make a function to make histograms using `ggplot2`
+```{r echo=TRUE, eval=TRUE}
+# load ggplot2
+library(ggplot2)
+# create function with 4 arguments, the variable as a vector, 
+# the character string for the x axis
+# the character string for the title
+# the number of bins
+
+make_histogram <- function(var = NULL, 
+                           xaxis = NULL,
+                           title = NULL,
+                           nbins = 30){
+  p <- ggplot(data = postWW2, aes(var)) + # initialize plot
+    geom_histogram(bins = nbins, alpha = 0.5, color = "black", 
+                   fill = "firebrick4") + # add histogram layer using nbins, 
+                                          # add some transparency using alpha, 
+                                          # add some color 
+    xlab(xaxis) + # plug in xaxis argument
+    ylab("Count") + # define y axis label
+    ggtitle(title) + # plug in title
+    theme_bw() +  # make the background white
+    theme(plot.title = element_text(size=16, face='bold'), # change title font
+      axis.title = element_text(size=16, face='bold'), # change axis title font
+      axis.text=element_text(size=12)) # change axis text font
+  # return p
+  return(p)
+}
+
+# histogram for capprop
+capprop_hist <- make_histogram(var = postWW2$capprop, 
+                               xaxis = "Challenger Probability of Winning",
+                               nbins = 25)
+# print it
+capprop_hist
+
+# histogram for ln_distance
+ln_distance_hist <- make_histogram(var = postWW2$ln_distance, 
+                               xaxis = "Distance in KM (ln)",
+                               nbins = 25)
+# print it
+ln_distance_hist
+
+# histogram for s_un_glo
+s_un_glo_hist <- make_histogram(var = postWW2$s_un_glo, 
+                                   xaxis = "Alliance Porfolio Similarity",
+                                   nbins = 25)
+# print it
+s_un_glo_hist
+```
+
+Hmmm, what if we wanted to arrange these plots together?  
+```{r echo=TRUE, eval=TRUE}
+# What if you want these plots next to one another?
+# put them in a list
+hist_list <- list(capprop_hist, ln_distance_hist, s_un_glo_hist)
+
+# use the multiplot function in Rmisc to put them in a common layout
+Rmisc::multiplot(plotlist = hist_list, cols = 3)
+```
+
+What if we wanted to save these in a file?
+```{r echo=TRUE, eval=FALSE}
+# Or we can save them to a file
+pdf("HistPlots.pdf")
+Rmisc::multiplot(plotlist = hist_list, cols = 3)
+dev.off()
+
+# shucks! a little smooshed, stretch the plot width wise
+pdf("HistPlots.pdf", width = 14)
+Rmisc::multiplot(plotlist = hist_list, cols = 3)
+dev.off()
+```
+
+We could also make density plots, thankfully ggplot makes this super easy.
+```{r echo=TRUE, eval=TRUE}
+# You could also plot these as density plots, which may be better for 
+# visualization as it avoids binning bias:
+make_density <- function(var = NULL,
+                         xaxis = NULL,
+                         title = NULL){
+  p <- ggplot(data = postWW2, aes(var)) + # initialize plot
+    # add density layer, add some transparency using alpha, add some color 
+    geom_density(alpha = 0.5, color = "black", fill = "firebrick4") + 
+    xlab(xaxis) + # plug in xaxis argument
+    ylab("Density") + # define y axis label
+    ggtitle(title) + # plug in title
+    theme_bw() +  # make the background white
+    theme(plot.title = element_text(size=16, face='bold'), # change title font
+        axis.title = element_text(size=16, face='bold'),# change axis title font
+        axis.text=element_text(size=12)) # change axis text
+  # return p
+  return(p)
+}
+
+# density for capprop
+capprop_dens <- make_density(var = postWW2$capprop, 
+                               xaxis = "Challenger Probability of Winning")
+# print it
+capprop_dens
+
+# density for ln_distance
+ln_distance_dens <- make_density(var = postWW2$ln_distance, 
+                                   xaxis = "Distance in KM (ln)")
+# print it
+ln_distance_dens
+
+# density for s_un_glo
+s_un_glo_dens <- make_density(var = postWW2$s_un_glo, 
+                                xaxis = "Alliance Porfolio Similarity")
+# print it
+s_un_glo_dens
+
+# What if you want these plots next to one another?
+# put them in a list
+density_list <- list(capprop_dens, ln_distance_dens, s_un_glo_dens)
+
+# use the multiplot function in Rmisc to put them in a common layout
+Rmisc::multiplot(plotlist = density_list, cols = 3)
+```
+
+We still have a decent number of dichotomous variables though, how do we handle those? We should use bar graphs!  
+
+```{r echo=TRUE, eval=TRUE}
+# make bar graph function
+make_bargraph <- function(var = NULL,
+                         xaxis = NULL,
+                         title = NULL){
+  p <- ggplot(data = postWW2, aes(var)) + # initialize plot
+    # add bar layer, add some transparency using alpha, add some color 
+    geom_bar(alpha = 0.5, color = "black", fill = "firebrick4") + 
+    xlab(xaxis) + # plug in xaxis argument
+    ylab("Count") + # define y axis label
+    ggtitle(title) + # plug in title
+    theme_bw() +  # make the background white
+    xlim("0", "1") +
+    theme(plot.title = element_text(size=16, face='bold'), # change title font
+        axis.title = element_text(size=16, face='bold'),# change axis title font
+        axis.text=element_text(size=12)) # change axis text font
+  # return p
+  return(p)
+}
+
+# bar for dispute
+dispute_bar <- make_bargraph(var = as.factor(postWW2$dispute),# factors help 
+                                                             # with x axis ticks
+                             xaxis = "Militarized Disputes")
+# print it
+dispute_bar
+
+# bar for ptargdef
+ptargdef_bar <- make_bargraph(var = as.factor(postWW2$ptargdef), 
+                             xaxis = "Relevant Defensive Alliance")
+# print it
+ptargdef_bar
+
+# bar for pchaloff
+pchaloff_bar <- make_bargraph(var = as.factor(postWW2$pchaloff), 
+                              xaxis = "Relevant Offensive Alliance")
+# print it
+pchaloff_bar
+
+# bar for jdem
+jdem_bar <- make_bargraph(var = as.factor(postWW2$jdem), 
+                              xaxis = "Jointly Democratic Dyads")
+# print it
+jdem_bar
+
+
+# What if you want these plots next to one another?
+# put them in a list
+bar_list <- list(dispute_bar, ptargdef_bar, pchaloff_bar, jdem_bar)
+
+# use the multiplot function in Rmisc to put them in a common layout
+Rmisc::multiplot(plotlist = bar_list, cols = 2)
+```
+
+How about if we wanted to make sense of these as a function of time? These time series plots would be immensely helpful in chracterizing any systematic trends in the prevalence of certain phenomena.  
+```{r echo=TRUE, eval=TRUE}
+# get the years
+years <- sort(unique(postWW2$year))
+
+# initialize an empty data frame
+plot_df <- data.frame()
+
+# do a for loop! define a variable t which is iteratively drawn from years, 
+# takes a few seconds
+for(t in years){
+  # subset broader data frame down to a particular year
+  year_df <- postWW2[postWW2$year == t,]
+  # get the sum of each discrete variable for this annual data frame
+  n_disputes <- sum(year_df$dispute, na.rm = TRUE)
+  n_dem <- sum(year_df$jdem, na.rm = TRUE)
+  n_def <- sum(year_df$ptargdef, na.rm = TRUE)
+  n_off <- sum(year_df$pchaloff, na.rm = TRUE)
+  
+  # now, let's concatenate these all into a vector so that its a row
+  row <- c(t, n_disputes, n_dem, n_def, n_off)
+  
+  # bind this row to the data frame
+  plot_df <- rbind(plot_df, row)
+  
+}
+  # as you become more experienced, you can move to using apply functions.  
+# apply functions are quicker than for loops.
+
+# let's look at this
+head(plot_df)
+
+# ugly column names!
+colnames(plot_df) <- c("year", "n_disputes", "n_dem", "n_def", "n_off")
+head(plot_df)
+# much better!
+
+# let's plot each of these separately (given the differences in scales)
+make_tsplot <- function(var = NULL,
+                        yaxis = NULL,
+                        title = NULL){
+  p <- ggplot(data = plot_df, aes(x = year, y = var)) + # initialize plot
+    geom_line(lwd = 1.5, color = "firebrick4") + # add thickish red line
+    xlab("Year") + # plug in xaxis argument
+    ylab(yaxis) + # define y axis label
+    ggtitle(title) + # plug in title
+    theme_bw() +  # make the background white
+    theme(plot.title = element_text(size=16, face='bold'), # change title font
+        axis.title = element_text(size=16, face='bold'),# change axis title font
+        axis.text=element_text(size=12)) # change axis text font
+  # return p
+  return(p)
+}
+
+# line for dispute
+# (factors help with x axis ticks)
+dispute_tsp <- make_tsplot(var = plot_df$n_disputes, 
+                             yaxis = "Militarized Disputes")
+# print it
+dispute_tsp
+
+# line for ptargdef
+ptargdef_tsp <- make_tsplot(var = plot_df$n_def, 
+                            yaxis = "Relevant Defensive Alliance")
+# print it
+ptargdef_tsp
+
+# line for pchaloff
+pchaloff_tsp <- make_tsplot(var = plot_df$n_off, 
+                            yaxis = "Relevant Offensive Alliance")
+# print it
+pchaloff_tsp
+
+# line for jdem
+jdem_tsp <- make_tsplot(var = plot_df$n_dem, 
+                        yaxis = "Jointly Democratic Dyads")
+# print it
+jdem_tsp
+
+
+# What if you want these plots next to one another?
+# put them in a list
+tsp_list <- list(dispute_tsp, ptargdef_tsp, pchaloff_tsp, jdem_tsp)
+
+# use the multiplot function in Rmisc to put them in a common layout
+Rmisc::multiplot(plotlist = tsp_list, cols = 2)
+```
+
+## Bivariate Analysis
+Once we have visualized single variables, we'd often want to move to visualizing the relationships between variables using scatter plots.  Let's give this a shot for the two variables of interest! 
+
+```{r echo=TRUE, eval=TRUE}
+p1 <- ggplot(data = postWW2, aes(x = ptargdef, y = dispute)) + # initialize plot
+    geom_point() + # add thickish red line
+    xlab("Relevant Defensive Commitment") + # plug in xaxis argument
+    ylab("Dispute Initiation") + # define y axis label
+    theme_bw() +  # make the background white
+    theme(plot.title = element_text(size=16, face='bold'), # change title font
+        axis.title = element_text(size=16, face='bold'),# change axis title font
+        axis.text=element_text(size=12)) # change axis text font
+
+p2 <- ggplot(data = postWW2, aes(x = pchaloff, y = dispute)) + # initialize plot
+  geom_point() + # add thickish red line
+  xlab("Relevant Offensive Commitment") + # plug in xaxis argument
+  ylab("Dispute Initiation") + # define y axis label
+  theme_bw() +  # make the background white
+  theme(plot.title = element_text(size=16, face='bold'), # change title font
+        axis.title = element_text(size=16, face='bold'),# change axis title font
+        axis.text=element_text(size=12)) # change axis text font
+
+# any guesses to what these look like?
+scatter_list <- list(p1, p2)
+
+Rmisc::multiplot(plotlist = scatter_list, cols =2)
+
+```
+
+# Quantitative Exploratory Data Analysis
+Quantitive EDA is a means of providing summary statistics for variables or the relationship between variables. At the very basic level, we can calculate the following:
+
+* Frequencies of variables
+* Central tendencies (mean, median)
+* Measures of spread (std. deviation, variance, range)
+* Percentiles of variables
+* Pearson correlations between variables
+* T-tests for differences in means
+
+## Univariate Analysis
+We will start with the univariate case and then move to bivariate quantitative EDA.
+```{r echo=TRUE, eval=TRUE}
+# let's define a list of variables that we are interested in summarizing, 
+# those we've previously used
+vars <- list("dispute", "ptargdef", "pchaloff", "capprop", "ln_distance", 
+             "s_un_glo", "jdem")
+
+# as I mentioned, apply family functions are faster than for loops 
+# and take at min. 2 arguments, data and a function to repetitively 
+# perform on that data. 
+# here, the data is the list vars
+# the function is a univariate eda function we will write 
+# to do everything for us
+
+univariate_eda <- function(var){
+  # define var as a vector
+  varname <- var
+  var <- postWW2[,var]
+  # get summary statistics
+  table_out <- summary(var)
+  
+  # if dichotomous, get the frequencies 
+  # (which would be odd for continuous variables)
+  if(length(unique(var)) == 2){
+    frequencies_out <- table(var)
+  } else {
+    # we need to return a variable frequencies out, so, if not calculating them,
+    # give it a null
+    frequencies_out <- NULL
+  }
+  
+  # calculate measures of spread
+  sd_out <- sd(var, na.rm = TRUE)
+  var_out <- sd_out^2
+  range_out <- range(var)
+  
+  # put in a named list
+  out_list <- list(variable = varname,
+                   summary_stats = table_out,
+                   frequencies = frequencies_out,
+                   stddev = sd_out,
+                   variance = var_out,
+                   var_range = range_out)
+  return(out_list)
+}
+
+# going to use lapply or list apply, which applies a function over a list
+var_desc <- lapply(vars, univariate_eda)
+
+# we can not index these according to the order that we feed the variables in
+# Ex: for dispute
+var_desc[[1]]
+```
+
+We can also write out a text file with these results (good for batch execution of code).
+```{r echo=TRUE, eval=FALSE}
+sink("VariableSummaries.txt")
+var_desc
+sink()
+```
+
+## Bivariate Analysis
+
+Two-way frequency tables are commonly used, especially when the treatment and outcome are binary 1st arg is row, 2nd arg is column (standard in R):
+```{r echo=TRUE, eval=TRUE}
+freq <- table(postWW2$ptargdef, postWW2$dispute)
+rownames(freq) <- c("No Alliance", "Alliance")
+colnames(freq) <- c("No Conflict", "Conflict")
+freq
+```
+
+Wow, conflict is rare, regardless of if there are alliances or not.  In fact, it looks like there are more conflicts in dyads where a target has an alliance! 
+  
+We can also calculate the cell proportions. This treats the denominator as the sum of all table values, each cell is the percentage of values. This indicates the fast number of dyads have no conflict but the target has an alliance:
+```{r echo=TRUE, eval=TRUE}
+prop.table(freq) 
+```
+
+This treats the denominator as the row sums. This indicates that conflict is relatively rare, regardless if the target has an alliance or not:
+```{r echo=TRUE, eval=TRUE}
+prop.table(freq, 1)
+```
+
+This treats the denominator as the column sum. This indicates that in most cases of conflict, or no conflict, there are alliances. 
+```{r echo=TRUE, eval=TRUE}
+prop.table(freq, 2) 
+```
+
+These may not be particularly useful though as conflict is a rare event. We can also do a variety of operations on this table, such as chi-squared tests:
+```{r echo=TRUE, eval=TRUE}
+chisq.test(freq)
+```
+
+Based upon this, we fail to reject the null that there is no relationship between alliances and conflict.  In other words: it looks as if there may not be a relationship between these variables.  
+
+We can also use t-tests, which provide a means of assessing the difference in means for two samples of data, here the sample of dyads for which there is no relevant alliance and those for which there is a relevant alliance.  We will call these the control and treatment samples:
+```{r echo=TRUE, eval=TRUE}
+t_test_deterrence <- t.test(x = postWW2[postWW2$ptargdef == 0, "dispute"], 
+                            y = postWW2[postWW2$ptargdef == 1, "dispute"])
+t_test_deterrence
+```
+
+We fail to reject the null, it looks like there may not be a difference between the two samples. We could also use Pearson correlations, which show a difference in the expected direction but not significant at any traditional level:
+```{r echo=TRUE, eval=TRUE}
+corr_deterrence <- cor.test(x = postWW2$ptargdef, y = postWW2$dispute,
+                            method = "pearson")
+corr_deterrence
+```
+
+As we all know, however, there are a variety of variables that influence both the likelihood of alliances and the likelihood of a MID.  In the language of causal inference, we refer to these as confounders!  We need control variables here to help us isolate these effects.  Enter logistic regression:
+```{r echo=TRUE, eval=TRUE}
+logit <- glm(dispute ~ ptargdef + pchaloff + capprop + ln_distance + s_un_glo +
+               jdem,
+             data = postWW2,
+             family = "binomial")
+
+texreg::screenreg(logit)
+texreg::plotreg(logit)
+```

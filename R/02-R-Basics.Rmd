@@ -1,0 +1,867 @@
+---
+title: "02: Basics of R"
+author: "Ben Campbell"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    toc: true
+    theme: united
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Nouns and Verbs
+R comes loaded with its own set of "base" operations or functions, and with these, you can do most anything. many people pride themselves on doing as much as they can with base R. 
+
+Te simplest thing you can do in R is arithmetic. For example, we can use R to find the mean of 3 and 5:
+```{r echo=TRUE, eval=TRUE}
+(3 + 5) / 2 
+```
+
+The second simplest thing you can do in R is assign values to variables. We can create a variable (or oebject) called `x` whose value is the number 3 like this:
+```{r echo=TRUE, eval=TRUE}
+x <- 3
+```
+
+You can think of these variables, or objects, as "nouns", and functions as the "verbs" of the language.
+
+This creates an object called `x` that equals the number 3. you can do anything with it that you can do with the number 3:
+```{r echo=TRUE, eval=TRUE}
+x + 3
+x + x
+(x + 5) / 2
+```
+
+Let's call `x` by name -- this shows us the value of x on the console.
+```{r echo=TRUE, eval=TRUE}
+x
+```
+
+Back to the arithmetic thing! Hidden in `(3+5)/2` are two important concepts: object types and functions.
+
+## Object Types
+First, object types. When you ask R to calculate three plus five and then divide the result by two, it has to do a series of things: 
+* First, it stores the numbers 3, 5, and 2 in memory. 
+* Then, it calculates the sum, and stores the number 8 in memory. 
+* Then, it retrieves the number 2 from memory, divides 8 by 2, stores the number 4 in memory, and "prints" the number 4 (printing is what we call it when the console spits out a result).
+
+Why am I telling you this?  Everything you do in R is an *operation* applied to an *object*. 
+
+Objects come in different types, or *classes*, e.g., numeric, character, logical, list, matrix, factor, data.frame.
+
+The way you *declare* your object in your code will tell R what class you want it to be, and not every operation will work with every class.
+
+### Numerics and Characters
+Gor example, this is how we define the character 3:
+```{r echo=TRUE, eval=TRUE}
+"3"
+```
+
+What can we do math with that? the computer should be smart enough to figure out
+# that numbers between quotes are numbers, right?
+```{r echo=TRUE, eval=TRUE, error=TRUE}
+"3" + "5"
+```
+
+That's weird. Why does that happen? The way the character 3 is stored in memory isn't "special" just because 3 is a number. The character 3 and the character A follow the same rules.  Once you tell R that 3 is a character, you can't add something to it, even if that something is a number:
+```{r echo=TRUE, eval=TRUE, error=TRUE}
+"3" + 5
+```
+
+How do we find the class of an object? it couldn't be easier:
+```{r echo=TRUE, eval=TRUE}
+class("3")
+class(3)
+```
+
+### Booleans
+So that's numerics and characters. Let's look at logical (aka Boolean) objects, which are a foundational component of a programming language. What does this expression return?
+```{r echo=TRUE, eval=TRUE}
+3 > 5
+```
+
+Is that the word FALSE (aka, a character object)?
+```{r echo=TRUE, eval=TRUE}
+class(3 > 5)
+```
+
+It's the "logical" class! TRUE and FALSE are the units of Boolean algebra, and I won't dwell on it too much but you can do crazy cool things with it -- like calculating the sum of 3 and 5, or creating the operating system I'm working on right now. 
+
+There are all sorts of comparisons you can do -- and an extremely simple syntax for them:
+```{r echo=TRUE, eval=TRUE}
+3 > 5
+3 >= 5 # >= means greater than or equal to
+3 < 5
+3 <= 5
+3 == 5 # you compare two objects with two equal signs (not one!!)
+3 != 5 # != means not equal to ("!" means "not" in R's Boolean syntax)
+```
+
+The Boolean operator AND is represented in R by `&`, and the operator OR is represented by `|`.  For example, `3 > 5` evaluates to `FALSE` and `3 < 5` evaluates to `TRUE`. What does  FALSE & TRUE equal?
+```{r echo=TRUE, eval=TRUE}
+(3 > 5) & (3 < 5)
+TRUE & TRUE
+FALSE & TRUE
+FALSE & FALSE
+
+# how about FALSE | (or) TRUE?
+(3 > 5) | (3 < 5)
+TRUE | TRUE
+FALSE | TRUE
+FALSE | FALSE
+```
+
+Boolean algebra also has a "not" operator; in R that's an exclamation point:
+```{r echo=TRUE, eval=TRUE}
+!TRUE
+!FALSE
+```
+
+And the "xor" operator, which is an "exclusive or": it equals TRUE if and only if you have one TRUE and one FALSE.
+```{r echo=TRUE, eval=TRUE}
+xor(TRUE, TRUE)
+xor(TRUE, FALSE)
+xor(FALSE, FALSE)
+```
+
+THIS IS REALLY IMPORTANT. R uses T and F as "shorthand" for TRUE and FALSE:
+```{r echo=TRUE, eval=TRUE}
+T & F
+```
+YOU SHOULD *****NEVER***** USE THAT. NEVER EVER EVER EVER EVER EVER EVER EVER.
+
+Why not? Let's assign another value to a variable. This time, instead of the number 3, my value is going to be the logical FALSE. And instead of `x`, I want to use a capital `T`.
+
+Surely, R will stop me from doing something this stupid, right?
+```{r echo=TRUE, eval=TRUE}
+T <- FALSE
+```
+
+It looks like it went through? but surely, R won't do actual Boolean algebra with my monstrosity... right? let's compare:
+```{r echo=TRUE, eval=TRUE}
+TRUE & TRUE
+T & TRUE
+
+# we can also compare if the two are equal using two equals signs like before:
+T == TRUE
+T == FALSE
+```
+
+If you ever, for any reason at all, ever, whatsoever, find yourself with a variable called T (or F) that equals *anything* (a character, a number), any Boolean operations you run with T or F will come out wrong. this can break *so* many things, especially if you regularly use T and F as short for TRUE and FALSE.
+
+Can you screw up the actual object TRUE? turns out you cannot:
+```{r echo=TRUE, eval=TRUE, error=TRUE}
+TRUE <- FALSE
+TRUE <- 3
+```
+
+One last thing on Booleans: you may want to know if a number is in a set of numbers, or if a character is in a set of characters.  You can do that with the special command `%in%`, whose syntax works like an arithmetic operator:
+```{r echo=TRUE, eval=TRUE}
+myname <- "ben"
+mathcamp <- c("liuya", "ben")
+myname %in% mathcamp
+"liuya" %in% mathcamp 
+```
+
+`%in%` returns a logical object, and as such it can be used in Boolean algebra:
+```{r echo=TRUE, eval=TRUE}
+"ben" %in% mathcamp & "maths" %in% mathcamp
+```
+
+The "not" operator works with `%in%` as well:
+```{r echo=TRUE, eval=TRUE, error=TRUE}
+!("ben" %in% mathcamp)
+```
+
+### Dates
+One quick one: R has date and time capabilities. you can find your computer's date like this:
+```{r echo=TRUE, eval=TRUE}
+Sys.Date()
+```
+
+You can also find the time...
+```{r echo=TRUE, eval=TRUE}
+Sys.time()
+```
+
+Dates in R are stored in UNIX format, meaning that the current day is actually an integer that counts the number of days since January 1, 1970. wWich brings us to this: you can *convert* different object types in R, as long as that conversion makes logical sense. For example:
+```{r echo=TRUE, eval=TRUE}
+as.numeric(Sys.Date())
+```
+
+This means we can also do arithmetic with dates:
+```{r echo=TRUE, eval=TRUE}
+Sys.Date() + 365
+Sys.Date() - as.numeric(Sys.Date())
+```
+
+We can use `as.Date` to *explicitly* create a date object and ask R how old I am, in days (I say explicitly because if you just write "1992-04-10" between quotes R will think you want to create a character object).
+```{r echo=TRUE, eval=TRUE}
+Sys.Date() - as.Date("1992-04-10")
+```
+
+And we can do things that don't make that much sense. For example, what is the mean between today and the day I was born?
+```{r echo=TRUE, eval=TRUE}
+today <- Sys.Date()
+birthday <- as.Date("1992-04-10")
+
+mean(c(today, birthday))
+```
+
+### Factors
+One last object type: R has *factor* objects, which are useful for categorical variables. Factor objects have a limited number of unique values (aka *levels*) that usually are labeled and sometimes are ordered.
+
+For example, here is a vector of the 12 months of the year:
+```{r echo=TRUE, eval=TRUE}
+months <- c(1:12)
+```
+
+That makes complete sense, right? 12 months, numbered from 1 to 12. but that's still a *numeric* variable.
+```{r echo=TRUE, eval=TRUE}
+months
+class(months)
+```
+
+Ghis means we can do arithmetic with months. Below you can see that January plus March equals April.
+```{r echo=TRUE, eval=TRUE}
+months[1] + months[3]
+```
+
+So that's not very good... we can transform our months variable into a factor like this (note the optional argument *ordered*, which we set to TRUE because, ofc, the months of the year follow a temporal order)
+```{r echo=TRUE, eval=TRUE}
+months <- factor(months, ordered = TRUE)
+```
+
+Now, whenever you call the first value of the variable, it shows you all the *levels* of the variable:
+```{r echo=TRUE, eval=TRUE}
+months[1]
+```
+
+Now, we can't add January and March:
+```{r echo=TRUE, eval=TRUE, error=TRUE}
+months[1] + months[3]
+```
+
+But we still have numbers from 1 to 12, as you can see with `levels()`:
+```{r echo=TRUE, eval=TRUE}
+levels(months)
+```
+
+That's kind of dumb... we can fix that with `levels()` though:
+```{r echo=TRUE, eval=TRUE}
+levels(months) <- c("January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November",
+                    "December")
+
+# so now, what is the first value of the months vector?
+months[1]
+```
+
+Factors are great for plotting. To show you why, I'm going to create some fake data. FIRST, the fake data will not include the factor object, but only the CHARACTERS with the names of the months.
+```{r echo=TRUE, eval=TRUE}
+fake_df1 <- data.frame(month = sample(levels(months), 100, replace = TRUE),
+                      y = sample(c(1:1000000), 100, replace = TRUE))
+```
+
+So here's a basic plot with ggplot, which we'll look at again in a minute:
+```{r echo=TRUE, eval=TRUE}
+library(ggplot2)
+ggplot(data = fake_df1, aes(month, y)) + geom_boxplot()
+```
+
+Look what happens to the x axis there -- it's in alphabetical order! If you have an ordered variable, this will ruin your plot. how about we replace the character vector with the factors?
+```{r echo=TRUE, eval=TRUE}
+fake_df2 <- data.frame(month = sample(months, 100, replace = TRUE),
+                       y = sample(c(1:1000000), 100, replace = TRUE))
+
+ggplot(data = fake_df2, aes(month, y)) + geom_boxplot()
+```
+
+
+# Data Storage
+## Vectors
+R also has ways of combining many different values into one object.  For example, there's the vector, which you create with the c() operator:
+```{r echo=TRUE, eval=TRUE}
+c(1, 2, 3)
+```
+
+By the way: you can do the same thing in R with a colon, which creates a sequence from the first number to the second, increasing by 1:
+```{r echo=TRUE, eval=TRUE}
+c(1:3)
+```
+
+You can do all kinds of things with vectors, like adding them to a number:
+```{r echo=TRUE, eval=TRUE}
+c(1, 2, 3) + 1
+```
+
+...or to another vector.
+```{r echo=TRUE, eval=TRUE}
+c(1, 2, 3) + c(1, 2, 3)
+```
+
+You can find the first object in a vector with square brackets:
+```{r echo=TRUE, eval=TRUE}
+vector <- c(10, 20, 30)
+vector[1]
+```
+
+One caveat: every element in a vector must be the same class. If you try to trick R, it will coerce elements for you:
+```{r echo=TRUE, eval=TRUE}
+c(1, "2", 3)
+```
+
+When you do operations on vectors, R will "recycle" vectors for you if they are not the same size. This is how we can add c(1, 2, 3) + 1 and get (2, 3, 4) back. Before adding, R "recycles" 1 to match the length of the longer vector. For example (note that R will give you a warning, but it will do the operation anyway!):
+```{r echo=TRUE, eval=TRUE}
+c(1, 2, 3) + c(10, 0)
+```
+
+## Matrices
+R also has matrices, created by passing a vector to the `matrix()` function (`ncol` tells us how many columns the matrix has. By default, R creates a "tall" matrix, with one column):
+```{r echo=TRUE, eval=TRUE}
+the_matrix <- matrix(c(1, 2, 3, 4, 5, 6, 7, 8), ncol = 2)
+```
+
+You can do matrix algebra in R (which has saved my life many times):
+```{r echo=TRUE, eval=TRUE}
+the_matrix + 2
+```
+
+The multiplication operator is elementwise:
+```{r echo=TRUE, eval=TRUE}
+the_matrix * the_matrix
+```
+
+You can multiply matrices with this funny %*% operator:
+```{r echo=TRUE, eval=TRUE, error=TRUE}
+the_matrix %*% the_matrix
+```
+
+But of course, these two aren't conformable. you have to transpose one side:
+```{r echo=TRUE, eval=TRUE}
+the_matrix %*% t(the_matrix)
+t(the_matrix) %*% the_matrix
+```
+
+You can create variables directly from these expressions:
+```{r echo=TRUE, eval=TRUE}
+matrix_reloaded <- the_matrix %*% t(the_matrix)
+```
+
+You can also modify variables "in place" (this is true for everything, not just matrices):
+```{r echo=TRUE, eval=TRUE}
+the_matrix <- the_matrix * the_matrix
+```
+
+## Data Frames
+R also has data frames, which is how most data objects are stored:
+```{r echo=TRUE, eval=TRUE}
+df <- data.frame(matrix_reloaded)
+```
+
+Now, instead of rows and columns like a matrix, this object has "observations" and "variables". The one I created just now is a boring example, so let's load a real data frame to look at. This is a dataset of Argentine legislators (as evidenced by that super helpful file name):
+```{r echo=TRUE, eval=TRUE}
+df <- read.table("~/code/math-workshop-instructor/R/data/Latin America legislator data.tab", 
+  sep="\t", header = TRUE)
+```
+
+You can access specific "cells" in a data frame with square brackets, like we accessed the values in the c(10, 20, 30) vector. data frames are indexed by row and then column:
+```{r echo=TRUE, eval=TRUE}
+df[3, 12]
+```
+
+We can look at all of one observation's values by leaving the column blank:
+```{r echo=TRUE, eval=TRUE}
+df[3,]
+```
+
+And we can look at all the values of a variable by leaving the row blank:
+```{r echo=TRUE, eval=TRUE}
+head(df[,12])
+```
+
+If we know the name of the variable we want, we can also use the `$` operator:
+```{r echo=TRUE, eval=TRUE}
+head(df$urbanization)
+```
+
+Remember: certain operations only work with certain object types. Can you find the mean of a data frame?
+```{r echo=TRUE, eval=TRUE}
+mean(df)
+```
+
+You can find the mean of a variable, though:
+```{r echo=TRUE, eval=TRUE}
+mean(df[,12])
+mean(df$urbanization)
+```
+
+# Functions
+If objects are nouns, functions are verbs.  Functions are operations that typically take an object, perform some change, and return an object.  A platting function might take in a vector of data and produce a histogram, for example.
+
+Now, let's look more deeply at how functions work. We just found the mean of a variable:
+```{r echo=TRUE, eval=TRUE}
+mean(df$urbanization)
+```
+
+You can access the help file for any R function with this syntax:
+
+```{r echo=TRUE, eval=TRUE}
+?mean
+```
+
+Note! If there are `NA`'s, you will get `NA`.  You must specify `na.rm = TRUE`. You can look at what kinds of objects a function can handle like this:
+```{r echo=TRUE, eval=TRUE}
+methods(mean)
+```
+
+As you can see, there's a `mean.default` (which means vectors of numerics), but there's also a `mean.Date`, as we saw earlier. there is no `mean.character` in there, though! It makes sense: you can't get the mean of A and B.
+
+Another example, you can transpose a `matrix` and a `data.frame`, and a `ts` object (`ts` stands for time series -- we don't have to talk about that for now).
+```{r echo=TRUE, eval=TRUE}
+methods(t)
+```
+
+Which means that this works (note how it *outputs* a matrix):
+```{r echo=TRUE, eval=TRUE}
+df_reloaded <- t(df)
+```
+
+Mean is a "primitive" R function, which is bad for us because we can't really read its code to figure out how it works unless we (1) know where to look in the R source files or (2) know C (and maybe some Fortran?). For other functions,  you can actually peek under the hood to see what they do.
+
+For example, we know about `mean.Date`, but there's also a `print.Date`. We know that printing means displaying it on the console, so we can guess what this does:
+```{r echo=TRUE, eval=TRUE}
+print.Date(today)
+```
+
+What if we try it with nothing in the parentheses?
+```{r echo=TRUE, eval=TRUE, error=TRUE}
+print.Date()
+```
+
+There's an error! this function needs an *argument* (aka an "input") in order for it to do its magic. What if we try it without the parentheses?
+```{r echo=TRUE, eval=TRUE}
+print.Date
+```
+
+We get the code for the function. we find in there: (1) a few "if" and "else" statements -- that's called control flow, and we'll get to it in a second; (2) one line that actually does the printing, by using the print() function. We also get a basic idea of how writing functions works... maybe we can use it to write a function of our own that we can use to find out how old people are!
+
+We can see that print.Date starts with `function(x, max = NULL)`, then square brackets, then a bunch of code, than the square brackets closes. let's try to copy that. we'll name our function "howold".
+
+```{r echo=TRUE, eval=TRUE}
+howold <- function(x) {
+  # what can we put in here? well, we know that we have to convert everything
+  # to a Date object before we can subtract them from today. and we know how
+  # to do that! so this is the Date object corresponding to the user's birthday.
+  birthday <- as.Date(x)
+  
+  # now we need to get today's date. we *could* use Sys.Date() inside all our
+  # operations, but it's cleaner if we give it a name:
+  today <- Sys.Date()
+  
+  # now we can subtract:
+  age <- today - birthday
+  
+  # if you run "today - birthday" in the console, you'll see that it shows
+  # some text. we can get rid of that by converting "age" into a numeric:
+  age <- as.numeric(age)
+}
+```
+
+And that's our function! Let's run it and see how old I am!
+```{r echo=TRUE, eval=TRUE}
+howold("1992-04-10")
+```
+
+Uh-oh...we got nothing. Is our function broken? Am I gonna get fired? Well... no, and maybe. The function does exactly what we asked it to do. The golden rule of coding is: if you got the wrong answer, it's because you asked the wrong question. I'd like the function to print the answer to the console, but I never actually wrote that into the function. so:
+
+```{r echo=TRUE, eval=TRUE}
+howold <- function(x) {
+  birthday <- as.Date(x)
+  today <- Sys.Date()
+
+  age <- today - birthday
+  age <- as.numeric(age)
+  # here's the new line:
+  print(age)
+}
+
+howold("1992-04-10")
+```
+
+Of course, there's a lot more we can do with that, just with the tools that we've seen so far:
+```{r echo=TRUE, eval=TRUE}
+howold <- function(x) {
+  birthday <- as.Date(x)
+  today <- Sys.Date()
+  
+  age <- today - birthday
+  age <- as.numeric(age)
+  age_in_years <- age/365
+  
+  # here's something new: we're using the paste() function to combine two pieces
+  # of text that we want to print to the console.
+  text <- paste("You are", age_in_years, 
+                "years old. That's like, older than my mom.")
+  
+  print(text)
+}
+
+howold("1992-04-10")
+```
+
+That's pretty dumb, for two reasons: (1) it shows too many digits after the decimal; (2) it will tell *every* user that they're very old. So we can modify it in two ways. The first is very simple: we can use round() to change how many digits it displays. The default with round() is to only show the integer part...
+```{r echo=TRUE, eval=TRUE}
+round(2.33333)
+```
+
+But we can change that with an *optional argument* that modifies its behavior.
+```{r echo=TRUE, eval=TRUE}
+round(2.33333, 2)
+
+howold <- function(x) {
+  birthday <- as.Date(x)
+  today <- Sys.Date()
+  
+  age <- today - birthday
+  age <- as.numeric(age)
+  age_in_years <- age/365
+  age_in_years <- round(age_in_years, 2)
+  
+  # here's something new: we're using the paste() function to combine two pieces
+  # of text that we want to print to the console.
+  text <- paste("You are", age_in_years, 
+                "years old. That's like, older than my mom.")
+  
+  print(text)
+}
+
+howold("1992-04-10")
+```
+
+The second modification to the function involves *control flow*.  Control flow is simply the order in which a program runs its commands.  The default in R is to run everything you write, from top to bottom, line by line. but we can use *conditional statements* to change that.
+
+Conditional statements will choose which chunk of code to run, based on some condition. For example:
+```{r echo=TRUE, eval=TRUE}
+x <- 3
+y <- 4
+
+if(x > y){
+  print(x + y)
+} else {
+  print(x * y)
+}
+```
+
+Here, since `x > y` evaluates to `FALSE`, R skips everything in the "if" square brackets and runs the code inside the "else" square brackets. We can extend this with an "else if" condition. 
+```{r echo=TRUE, eval=TRUE}
+if(x > y){
+  print(x + y)
+} else if (x == y){
+  print(x ^ y)
+} else{
+  print(x * y)
+}
+```
+
+We can read the above code as: IF x is larger than y, then print x + y. ELSE, IF x is equal to y, print x to the power y. ELSE, print x * y. How can we use that in our dumb age function? How about we write different insults for people of different ages? like this:
+```{r echo=TRUE, eval=TRUE}
+howold <- function(x) {
+  birthday <- as.Date(x)
+  today <- Sys.Date()
+  
+  age <- today - birthday
+  age <- as.numeric(age)
+  age_in_years <- age/365
+  age_in_years <- round(age_in_years, 2)
+  
+  if(birthday < as.Date("1990-05-25")){
+    text <- paste("You are", age_in_years, 
+                  "years old. Bet you're really, really, really into Fortnite.")
+  } else if (birthday > as.Date("1990-05-25")){
+    text <- paste("You are", age_in_years, 
+                  "years old. That's like, older than my mom.")    
+  } else{
+    text <- "You either are Ben or his evil twin. Please be the evil twin."
+  }
+  
+  print(text)
+}
+
+howold("1992-04-10")
+```
+
+Of course, any function that ends with `print()` or `return()` can be used to assign the object being printed or returned to a variable:
+```{r echo=TRUE, eval=TRUE}
+howold <- function(x) {
+  birthday <- as.Date(x)
+  today <- Sys.Date()
+  
+  age <- today - birthday
+  age <- as.numeric(age)
+  age_in_years <- age/365
+  age_in_years <- round(age_in_years, 2)
+  
+  if(birthday < as.Date("1990-05-25")){
+    text <- paste("You are", age_in_years, 
+                  "years old. Bet you're really, really, really into Fortnite.")
+  } else if (birthday > as.Date("1990-05-25")){
+    text <- paste("You are", age_in_years, 
+                  "years old. That's like, older than my mom.")    
+  } else{
+    text <- "You either are Ben or his evil twin. Please be the evil twin."
+  }
+  
+  return(text)
+}
+
+personalized_insult <- howold("1992-04-10")
+personalized_insult
+```
+
+# Data Visualization
+Now is the time when I get to give you an example of where base R falls short! Let's go back to that dataset of Argentine legislators. Here's that list of urbanization rates again:
+```{r echo=TRUE, eval=TRUE}
+head(df$urbanization)
+```
+
+So maybe we can build a plot? let's try a histogram, with `hist()`:
+```{r echo=TRUE, eval=TRUE}
+hist(df$urbanization)
+```
+
+How about a plot of literacy and urbanization rates? We can draw a scatterplot with `plot()`:
+```{r echo=TRUE, eval=TRUE}
+plot(df$literacy, df$urbanization)
+```
+
+So it works, but it looks really ugly. Base R plotting has other problems, but for now let's just go with "really ugly".  How do you solve that problem? you *could* write your own set of functions todraw nicer plots. or you could download a set of functions from someone else?
+
+In R, third-party libraries are called packages. Packages are a means of building upon what is available in base R, providing additional functionality! Note though, often packages may conflict with base R functions, so be aware if you see these messages when loading packages.
+
+Packages are installed by default from CRAN, the official R repository. You can install a package with:
+```{r echo=TRUE, eval=TRUE}
+install.packages("ggplot2", repos='http://cran.us.r-project.org')
+```
+
+And after you install a package, you may load it with:
+```{r echo=TRUE, eval=TRUE}
+library(ggplot2)
+```
+
+Basic `ggplot2` functions are `qplot()` (for "quick plot"; it tries to figure out 
+# what you want to plot based on what variables you pass to it):
+```{r echo=TRUE, eval=TRUE}
+qplot(df$urbanization)
+qplot(df$literacy, df$urbanization)
+```
+
+And `ggplot()`, whose syntax is slightly more complex but which is infinitely customizable. the example below isn't really an example of good data viz, but note how much you can modify with only a few lines of code:
+```{r echo=TRUE, eval=TRUE}
+ggplot(data = df, aes(x = literacy, y = urbanization)) + 
+  geom_point(aes(colour = factor(gender_1))) + 
+  scale_color_discrete(labels = c("Male", "Female"),
+                       guide = guide_legend(title = "Gender")) +
+  theme_bw() + xlab("Literacy rates") + ylab("Urbanization rate") +
+  ggtitle("Hello world!")
+```
+
+There are about as many R packages as there are use cases. If I had to guess, the packages you'll use the most in the coming couple of years are:
+* `ggplot2` to create plots;
+* `foreign` to load data files created in Stata, SPSS, SAS, etc;
+* `texreg` to create LaTeX tables (people may recommend stargazer... I hate it);
+* the `tidyverse` packages (particularly `dplyr`) for data manipulation.
+
+## A note on the Tidyverse
+The Tidyverse refers to a set of packages developed by Posit, the company associated with RStudio and a series of other open source packages.  The Tidyverse is a suite of packages and tools designed to help data scientists import, clean, manipulate, and visualize their data.  The Tidyverse packages are unified by a shared philosophy of data structure ("tidy data") and programming.  The Tidyverse suite of packages consists of `readr`, `tibble`, `tidyr`, `dplyr`, `purrr`, `ggplot2`, `stringr`, and `forcats`.  The Tidyverse, itself, is also a package that can be installed and accessed.
+
+
+### Why use the Tidyverse v. Base R?
+There are significant differences between how Base R and the Tidyverse handle particular tasks.  Typically, proponents of the Tidyverse argue that there are several reasons it should be used:
+* Consistency across stages of data analysis, from data importation to tidying, manipulation, and visualization.  
+    + Common grammar across stages.
+    + Pipe operator (`%>%`).
+* Parsimonious, vectorized code. 
+* Very computationally efficient, often quicker than Base R.
+* Has reached critical mass.
+    + More downstream dependencies.
+    + Many collaborators may use it (100,000+ installs).  
+
+There are of course some drawbacks for Base R users:
+* The Tidyverse packages may not behave well with other packages, it is designed to be self-contained.
+* New syntax is introduced.
+* New classes (`tbl`) may not behave well with other functions, unconventional row labeling behavior.
+
+If you're interested in learning more, here's a [workshop](https://github.com/benjamin-w-campbell/TidyverseDataManipulation) I put together when I was a PRISM fellow! 
+
+
+# Looping and Iteration
+One last thing: loops and automating stuff. Let's load a new dataset so we can create a problem we don't really have and thus work with making loops. `values` has night light data for the 1122 Colombian municipalities over a 21-year period (1993-2013):
+```{r echo=TRUE, eval=TRUE}
+values <- read.csv("~/code/math-workshop-instructor/R/data/values.csv", sep="", 
+                   stringsAsFactors = FALSE)
+```
+
+`View()` shows us the data frame in the source editor pane:
+```{r echo=TRUE, eval=FALSE}
+View(values)
+```
+
+So, what I want to do here is calculate the mean level of light of each municipality. we can do that for the first one like this:
+```{r echo=TRUE, eval=TRUE}
+mean(as.numeric(values[1,]))
+```
+
+and we can continue on...
+```{r echo=TRUE, eval=TRUE}
+mean(as.numeric(values[2,]))
+mean(as.numeric(values[3,]))
+mean(as.numeric(values[4,]))
+mean(as.numeric(values[5,]))
+mean(as.numeric(values[6,]))
+mean(as.numeric(values[7,]))
+mean(as.numeric(values[8,]))
+mean(as.numeric(values[9,]))
+mean(as.numeric(values[10,]))
+mean(as.numeric(values[11,]))
+mean(as.numeric(values[12,]))
+mean(as.numeric(values[13,]))
+mean(as.numeric(values[14,]))
+mean(as.numeric(values[15,]))
+mean(as.numeric(values[16,]))
+mean(as.numeric(values[17,]))
+mean(as.numeric(values[18,]))
+mean(as.numeric(values[19,]))
+mean(as.numeric(values[20,]))
+mean(as.numeric(values[21,]))
+mean(as.numeric(values[22,]))
+mean(as.numeric(values[23,]))
+mean(as.numeric(values[24,]))
+mean(as.numeric(values[25,]))
+mean(as.numeric(values[26,]))
+mean(as.numeric(values[27,]))
+mean(as.numeric(values[28,]))
+mean(as.numeric(values[29,]))
+mean(as.numeric(values[30,]))
+mean(as.numeric(values[31,]))
+mean(as.numeric(values[32,]))
+mean(as.numeric(values[33,]))
+mean(as.numeric(values[34,]))
+mean(as.numeric(values[35,]))
+mean(as.numeric(values[36,]))
+mean(as.numeric(values[37,]))
+mean(as.numeric(values[38,]))
+mean(as.numeric(values[39,]))
+mean(as.numeric(values[40,]))
+```
+
+I'm already exhausted (yes, I did write those by hand. it took forever), and there are still 1,082 towns to go. Surely, there must be a different way to do it.
+
+That's basically the kind of problem loops are designed to solve: you need to run a set of instructions that follow a pattern. So we first create a vector in which to store our town means, and then calculate them with a for loop:
+```{r echo=TRUE, eval=TRUE}
+means <- NA
+
+for(i in 1:nrow(values)) {
+  means[i] <- mean(as.numeric(values[i,]))
+}
+head(means)
+```
+
+Pay attention to the first line of the loop: we're creating a variable called `i` (but you can call it anything) and making it equal to a *list* that goes from 1 to the number of rows in our data set. Then, inside the curly brackets, we calculate the mean of the "ith" row of the data set, and store it in the "ith" position in a list called means.
+
+Pro-tip: R is really bad at handling memory, so whenever possible you should try to preallocate memory so that R doesn't have to continuously ask for more memory (which can help save time on large operations).
+```{r echo=TRUE, eval=TRUE}
+means <- rep(NA, nrow(values))
+
+for(i in 1:nrow(values)) {
+  means[i] <- mean(as.numeric(values[i,]))
+}
+
+head(means)
+```
+
+In R, loops are typically thought of as a 'last resort' measure.Tthis is due to the fact that the R language's primitive functions are written in C. When you run a for loop in R, R opens a C environment *each time* it goes through the loop. In our Colombian towns example, R created a C environment, ran the code inside the loop, and closed it... 1122 times. As you can imagine, this is quite slow.
+
+As a result, there are many R functions that replace loops. In our Colombian towns example, we could have tried:
+```{r echo=TRUE, eval=TRUE}
+means2 <- rowMeans(values)
+```
+
+Or, from the apply family:
+```{r echo=TRUE, eval=TRUE}
+means3 <- apply(values, 1, mean)
+```
+
+We can check that the three lists are the same:
+```{r echo=TRUE, eval=TRUE}
+mean(means == means2 & means == means3)
+```
+
+...with the difference that `rowMeans()` and `apply()` are much faster. Writing a loop is usually not the solution.  We can use benchmarking to gauge how long code takes to run:
+```{r echo=TRUE, eval=TRUE}
+install.packages("microbenchmark", repos='http://cran.us.r-project.org')
+library(microbenchmark)
+
+loop_means <- function(values){
+  means <- rep(NA, nrow(values))
+
+  for(i in 1:nrow(values)) {
+    means[i] <- mean(as.numeric(values[i,]))
+  }
+  
+  return(means)
+}
+
+microbenchmark::microbenchmark(
+  loop_means(values),
+  rowMeans(values),
+  apply(values, 1, mean)
+)
+```
+
+Oh and by the way, I didn't write that big list of means by hand. I made a loop and used the paste() function to create the strings.
+```{r echo=TRUE, eval=TRUE}
+for(i in 1:40) {
+  print(paste0("mean(as.numeric(values[",i,",]))"))
+}
+```
+
+R also has *while* loops, which work slightly differently. They will keep running, over and over, as long as the Boolean expression is `TRUE`. It can be very useful... in rare cases. say, for example, that you want to draw a random number with certain properties: it has to be between 1 and 100, and it has to be a multiple of 7.
+
+Here, we draw one number with the sample() function, which takes 2 arguments: (1) the vector we want to draw from, and (2) how many numbers we want
+```{r echo=TRUE, eval=TRUE}
+random_number <- sample(c(1:100), 1)
+random_number
+```
+
+Here, we use the modulo (or 'mod') operator: n %% m is equal to n mod m, which is the remainder of the division of n by m. For example, 3 mod 2 == 1;  4 mod 2 == 0.
+```{r echo=TRUE, eval=TRUE}
+while(random_number %% 7 != 0){
+  random_number <- sample(c(1:100), 1)
+  print(random_number)
+  Sys.sleep(0.2)
+}
+```
+
+Note that inside the loop, we draw random_number again -- this is absolutely necessary! The loop will continue running *while* random_number is not a multiple of 7; if you don't modify random_number inside the loop, it'll just keep running over and over until it fills up your RAM, crashing your computer.
+
+Also note the Sys.sleep(0.2) line -- that's just for demonstration purposes.  It tells the system to wait 0.2 seconds before continuing to run code; random number generators are too fast and without that line, all the random numbers we drew would appear all at once on the console.
+
+While loops can also be used to run things a certain number of times. Here, we create a variable called expression that will control the loop below.
+```{r echo=TRUE, eval=TRUE}
+expression <- 5
+```
+
+Note that we make reference to the 'expression' variable here, BUT ALSO note that we decrease expression by 1 each time the loop runs. this guarantees that eventually, the term 'expression > 0' will be FALSE, and thus we will be able to leave the loop, safe and sound. without the line that decreases the value by 1, your R or your computer will crash.
+```{r echo=TRUE, eval=TRUE}
+while(expression > 0){
+  print(paste("expression is still true, expression =", expression))
+  expression <- expression - 1
+}
+```
+
+
+
+
