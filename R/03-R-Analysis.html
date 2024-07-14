@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ben Campbell" />
 
-<meta name="date" content="2023-08-01" />
+<meta name="date" content="2024-07-14" />
 
 <title>03: Example Exploratory Data Analysis</title>
 
@@ -371,7 +371,7 @@ pre code {
 
 <h1 class="title toc-ignore">03: Example Exploratory Data Analysis</h1>
 <h4 class="author">Ben Campbell</h4>
-<h4 class="date">2023-08-01</h4>
+<h4 class="date">2024-07-14</h4>
 
 </div>
 
@@ -440,9 +440,12 @@ using a lot of functions from the same package, you may use
 <code>library()</code>.</p>
 <p>This will take a few seconds as it is 1,000,000+ directed dyads.</p>
 <pre class="r"><code>install.packages(c(&quot;rio&quot;, &quot;Rmisc&quot;, &quot;texreg&quot;), repos=&#39;http://cran.us.r-project.org&#39;)</code></pre>
+<pre><code>## also installing the dependencies &#39;R.oo&#39;, &#39;R.methodsS3&#39;, &#39;writexl&#39;, &#39;R.utils&#39;</code></pre>
 <pre><code>## Warning: unable to access index for repository http://cran.us.r-project.org/bin/macosx/big-sur-arm64/contrib/4.1:
 ##   cannot open URL &#39;http://cran.us.r-project.org/bin/macosx/big-sur-arm64/contrib/4.1/PACKAGES&#39;</code></pre>
-<pre><code>## installing the source packages &#39;rio&#39;, &#39;Rmisc&#39;, &#39;texreg&#39;</code></pre>
+<pre><code>## Package which is only available in source form, and may need
+##   compilation of C/C++/Fortran: &#39;writexl&#39;</code></pre>
+<pre><code>## installing the source packages &#39;R.oo&#39;, &#39;R.methodsS3&#39;, &#39;writexl&#39;, &#39;R.utils&#39;, &#39;rio&#39;, &#39;Rmisc&#39;, &#39;texreg&#39;</code></pre>
 <pre class="r"><code>dat &lt;- rio::import(&#39;~/code/math-workshop-instructor/R/data/LeedsJohnsonJOPrep.dta&#39;)</code></pre>
 </div>
 <div id="spot-checking" class="section level2">
@@ -664,8 +667,8 @@ collector to free up memory.</p>
 <pre class="r"><code>rm(dat)
 gc()</code></pre>
 <pre><code>##            used  (Mb) gc trigger   (Mb) limit (Mb)  max used  (Mb)
-## Ncells   894339  47.8    1439647   76.9         NA   1439647  76.9
-## Vcells 52332955 399.3  136863776 1044.2      32768 125328485 956.2</code></pre>
+## Ncells   755155  40.4    1439647   76.9         NA   1439647  76.9
+## Vcells 52146567 397.9  137030759 1045.5      32768 124603125 950.7</code></pre>
 </div>
 </div>
 <div id="visual-exploratory-data-analysis" class="section level1">
