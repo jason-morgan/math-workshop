@@ -10,3 +10,4 @@ Political Science Department Math Workshop for first year graduate students.
 + Drew Rosenberg
 + Daniel Kent
 + Caleb Leininger
++ Ben Campbell
