@@ -1,8 +1,8 @@
 
 ### Day 1: Intro, Notation and Definitions, and Some Basic Mathematics
 
-+ Read  [this](/files/even_geniuses_work_hard.pdf) essay by Carol Dweck, "Even Geniuses Work Hard."
-+ Read [this](/files/schwartz.pdf) short essay. Schwartz, Martin A. 2008. "The importance of stupidity in scientific research.'' The Journal of Cell Science 121: 1771. DOI:[10.0.4.218/jcs.033340](10.1242/jcs.033340).
++ Read [this](https://www.ascd.org/el/articles/even-geniuses-work-hard) essay by Carol Dweck, "Even Geniuses Work Hard."
++ Read [this](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2386960/pdf/jcs-121-11-1771.pdf) short essay. Schwartz, Martin A. 2008. "The importance of stupidity in scientific research.'' The Journal of Cell Science 121: 1771. DOI:[10.1242/jcs.033340](https://doi.org/10.1242/jcs.033340).
 + Watch [this](https://www.youtube.com/watch?v=IUTGFQpKaPU) video.
 
 ### Day 2: More Basic Mathematics
