@@ -149,7 +149,7 @@ T == TRUE
 T == FALSE
 ```
 
-If you ever, for any reason at all, ever, whatsoever, find yourself with a variable called T (or F) that equals *anything* (a character, a number), any Boolean operations you run with T or F will come out wrong. this can break *so* many things, especially if you regularly use T and F as short for TRUE and FALSE.
+If you ever, for any reason at all, ever, whatsoever, find yourself with a variable called T (or F) that equals *anything* (a character, a number), any Boolean operations you run with T or F will come out wrong. This can break *so* many things, especially if you regularly use T and F as short for TRUE and FALSE.
 
 Can you screw up the actual object TRUE? turns out you cannot:
 ```{r echo=TRUE, eval=TRUE, error=TRUE}
@@ -186,7 +186,7 @@ You can also find the time...
 Sys.time()
 ```
 
-Dates in R are stored in UNIX format, meaning that the current day is actually an integer that counts the number of days since January 1, 1970. wWich brings us to this: you can *convert* different object types in R, as long as that conversion makes logical sense. For example:
+Dates in R are stored in UNIX format, meaning that the current day is actually an integer that counts the number of days since January 1, 1970. Which brings us to this: you can *convert* different object types in R, as long as that conversion makes logical sense. For example:
 ```{r echo=TRUE, eval=TRUE}
 as.numeric(Sys.Date())
 ```
@@ -224,7 +224,7 @@ months
 class(months)
 ```
 
-Ghis means we can do arithmetic with months. Below you can see that January plus March equals April.
+This means we can do arithmetic with months. Below you can see that January plus March equals April.
 ```{r echo=TRUE, eval=TRUE}
 months[1] + months[3]
 ```
@@ -363,8 +363,9 @@ df <- data.frame(matrix_reloaded)
 
 Now, instead of rows and columns like a matrix, this object has "observations" and "variables". The one I created just now is a boring example, so let's load a real data frame to look at. This is a dataset of Argentine legislators (as evidenced by that super helpful file name):
 ```{r echo=TRUE, eval=TRUE}
-df <- read.table("~/code/math-workshop-instructor/R/data/Latin America legislator data.tab", 
+df <- read.table("./data/Latin America legislator data.tab", 
   sep="\t", header = TRUE)
+df
 ```
 
 You can access specific "cells" in a data frame with square brackets, like we accessed the values in the c(10, 20, 30) vector. data frames are indexed by row and then column:
